@@ -36,7 +36,8 @@ def get_data_from_sheet(base_link):
 # In[ ]:
 
 
-# Функция принимает лист гугл документа, на котором находится основная статистика (Чек-лист) и парсит его
+# Функция для парсинга Чек Листов 
+# принимает лист гугл документа, на котором находится основная статистика (Чек-лист) и парсит его
 # на выходе возвращает датаФрейм
 # на вход принимает:
 # content - данные с листа гугл документа
@@ -90,6 +91,13 @@ def parse_check_list_report(content, target_sheet, name, report):
 # In[4]:
 
 
+# Функция для парсинга CRM 
+# принимает лист гугл документа, на котором находится основная статистика CRM и парсит его
+# на выходе возвращает датаФрейм
+# на вход принимает:
+# content - данные с листа гугл документа
+# target_sheet - название листа
+# name - название клиента
 def parse_crm_report(content, target_sheet, name, report):
     # создаем датаФрейм на основании данных с листа гугл документа
     df_tmp = pd.read_excel(content, sheet_name=target_sheet, header=None)
@@ -108,7 +116,25 @@ def parse_crm_report(content, target_sheet, name, report):
 # In[ ]:
 
 
-
+# Функция для парсинга списка сотрудников 
+# принимает лист гугл документа, на котором находится основная статистика CRM и парсит его
+# на выходе возвращает датаФрейм
+# на вход принимает:
+# content - данные с листа гугл документа
+# target_sheet - название листа
+# name - название клиента
+def parse_employees_report(content, target_sheet, name, report):
+    # создаем датаФрейм на основании данных с листа гугл документа
+    df_tmp = pd.read_excel(content, sheet_name=target_sheet, header=None)
+    df_tmp = df_tmp.fillna('')
+    df_tmp.columns = df_tmp.iloc[0].str.lower().str.strip().str.replace('\n', ' ') # забираем название полей из файла
+    df_tmp = df_tmp.iloc[1:]
+    df_tmp = df_tmp[df_tmp['фио']!='']
+    df_tmp = df_tmp.reset_index(drop=True)
+    df_tmp['client'] = name
+    df_tmp['dashboard'] = report
+        
+    return df_tmp
 
 
 # In[ ]:
