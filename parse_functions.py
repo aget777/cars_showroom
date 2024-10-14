@@ -140,5 +140,19 @@ def parse_employees_report(content, target_sheet, name, report):
 # In[ ]:
 
 
+def parse_targets_plan_report(content, target_sheet, name, report):
+    df_tmp = pd.read_excel(content, sheet_name=target_sheet, header=None)
+    df_tmp = df_tmp.fillna('')
+    df_tmp.columns = df_tmp.iloc[0].str.lower().str.strip().str.replace('\n', ' ') # забираем название полей из файла
+    df_tmp = df_tmp.iloc[1:]
+    
+    if target_sheet.lower() != 'справочник':
+        df_tmp = df_tmp[df_tmp['дата начала']!='']
+        df_tmp['дата начала'] = pd.to_datetime(df_tmp['дата начала']).dt.date # приводим в формат даты
+        df_tmp['дата окончания'] = pd.to_datetime(df_tmp['дата окончания']).dt.date # приводим в формат даты
+        df_tmp = df_tmp.reset_index(drop=True)
+        df_tmp['client'] = name
+        df_tmp['dashboard'] = report
 
+    return df_tmp
 
